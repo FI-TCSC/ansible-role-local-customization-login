@@ -1,0 +1,73 @@
+---
+# tasks file for ansible-role-postfix
+#
+- name: make sure postfix is installed
+  tags: postfix
+  action: >
+    {{ ansible_pkg_mgr }}
+    name=postfix
+    state=installed
+
+#- name: Lets tag main.cf to ansible
+#  tags: postfix
+#  lineinfile: dest=/etc/postfix/main.cf
+#              line="# This file is {{ ansible_managed }} "
+#              state=present
+#              regexp="^# This file is .*$"
+#              backup=yes
+
+- name: Lets listen to internal interface
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf 
+              line="inet_interfaces = localhost, {{ int_ip_addr }}" 
+              backup=yes 
+              regexp="^inet_interfaces =.*$"
+              state=present
+  notify:
+    - reload postfix
+
+- name: Lets masquerade mail from internal hosts
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf
+              line="masquerade_domains = {{ intDomain }}, localdomain"
+              backup=yes 
+              regexp="^masquerade_domains =.*$"
+              state=present
+
+  #when: postfix_relayhost == "{{ inventory_hostname }}" 
+  notify:
+    - reload postfix
+
+- name: Create canonical_db for node mails
+  tags: postfix
+  copy: src=files/sender_canonical dest=/etc/postfix/sender_canonical
+  register: postfix_sender_canonical
+  
+- name: Ensure canonical_db is compiled
+  tags: postfix
+  shell: postmap /etc/postfix/sender_canonical
+  when: postfix_sender_canonical | changed
+
+- name: Add sender_canonical to postfix.conf
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf
+              line="sender_canonical_maps = pcre:/etc/postfix/sender_canonical"
+              backup=yes
+              regexp="^sender_canonical_maps =.*$"
+              state=present
+  notify: reload postfix
+
+- name: Add local modulepath to /etc/profile.d
+  tags: local
+  copy: src=files/tut-modules.sh dest=/etc/profile.d/tut-modules.sh
+
+- name: Add admin group to sudoers
+  tags: sudo
+  lineinfile: "dest=/etc/sudoers
+              line='%admin  ALL=(ALL)       NOPASSWD: ALL'
+              backup=yes
+              regexp='^%admin .*$'
+              state=present
+              validate='visudo -cf %s'"
+# inet_interfaces = localhost
+
