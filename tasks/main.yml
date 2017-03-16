@@ -70,4 +70,15 @@
               state=present
               validate='visudo -cf %s'"
 # inet_interfaces = localhost
+- name: Add xpra-repo to login node[s]
+  tags: xpra
+  yum_repository:
+    name: xpra 
+    description: XPRA remote gui repo
+    baseurl: http://xpra.org/dists/CentOS/7/x86_64/
+    gpgkey: https://xpra.org/gpg.asc
+    gpgcheck: yes
 
+- name: Install xpra packages
+  tags: xpra
+  package: name=xpra state=installed
