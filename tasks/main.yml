@@ -82,3 +82,12 @@
 - name: Install xpra packages
   tags: xpra
   package: name=xpra state=installed
+
+- name: Add local Mellanox-repo
+  tags: ib
+  yum_repository:
+    name: local-mellanox 
+    description: Mellanox IB-stack repo
+    baseurl: file:///home/Mellanox-repo/RPMS
+    gpgcheck: no
+
