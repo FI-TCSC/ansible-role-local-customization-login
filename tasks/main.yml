@@ -91,3 +91,15 @@
     baseurl: file:///home/Mellanox-repo/RPMS
     gpgcheck: no
 
+- name: Copy local krb5.conf to login-nodes
+  tags: intrahome
+  copy: src=files/krb5.conf dest=/etc/krb5.conf
+
+- name: Add --trust-dns flag to request-key.conf
+  tags: intrahome
+  lineinfile: 
+      dest=/etc/request-key.d/cifs.spnego.conf
+      line="create  cifs.spnego    * * /usr/sbin/cifs.upcall --trust-dns %k"
+      regexp="^create  cifs\.spnego.*"
+      state=present
+
