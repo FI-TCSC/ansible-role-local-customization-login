@@ -98,4 +98,36 @@
               state=present
               validate='visudo -cf %s'"
 # inet_interfaces = localhost
+- name: Add xpra-repo to login node[s]
+  tags: xpra
+  yum_repository:
+    name: xpra 
+    description: XPRA remote gui repo
+    baseurl: http://xpra.org/dists/CentOS/7/x86_64/
+    gpgkey: https://xpra.org/gpg.asc
+    gpgcheck: yes
+
+- name: Install xpra packages
+  tags: xpra
+  package: name=xpra state=installed
+
+- name: Add local Mellanox-repo
+  tags: ib
+  yum_repository:
+    name: local-mellanox 
+    description: Mellanox IB-stack repo
+    baseurl: file:///home/Mellanox-repo/RPMS
+    gpgcheck: no
+
+- name: Copy local krb5.conf to login-nodes
+  tags: intrahome
+  copy: src=files/krb5.conf dest=/etc/krb5.conf
+
+- name: Add --trust-dns flag to request-key.conf
+  tags: intrahome
+  lineinfile: 
+      dest=/etc/request-key.d/cifs.spnego.conf
+      line="create  cifs.spnego    * * /usr/sbin/cifs.upcall --trust-dns %k"
+      regexp="^create  cifs\.spnego.*"
+      state=present
 
