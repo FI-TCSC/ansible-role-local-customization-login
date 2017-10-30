@@ -57,6 +57,34 @@
               state=present
   notify: reload postfix
 
+- name: Make sure that sender_canonical is used
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf
+              line="local_header_rewrite_clients = static:all"
+              backup=yes
+              regexp="^local_header_rewrite_clients =.*$"
+              state=present
+  notify: reload postfix
+
+- name: Make sure that remoteheaders are modified
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf
+              line="remote_header_rewrite_domain = tcsc-local"
+              backup=yes
+              regexp="^remote_header_rewrite_domain =.*$"
+              state=present
+  notify: reload postfix
+
+- name: Make sure that sender_canonical is used
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf
+              line="mydestination = $myhostname, localhost.$mydomain, localhost"
+              backup=yes
+              regexp="^mydestination =.*$"
+              state=present
+  notify: reload postfix
+
+
 - name: Add local modulepath to /etc/profile.d
   tags: local
   copy: src=files/tut-modules.sh dest=/etc/profile.d/tut-modules.sh

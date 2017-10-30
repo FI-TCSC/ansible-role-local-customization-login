@@ -1,2 +1,3 @@
 /(.*)@(.*)\.local/      $2@merope.tut.fi
 /(.*)@(.*)\.tcsc-local.cc.tut.fi/       $1-$2@narvi.cc.tut.fi
+/(.*)@tcsc-local.cc.tut.fi/             $1@narvi.cc.tut.fi
