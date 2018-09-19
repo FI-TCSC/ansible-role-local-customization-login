@@ -29,7 +29,7 @@
 - name: Lets masquerade mail from internal hosts
   tags: postfix
   lineinfile: dest=/etc/postfix/main.cf
-              line="masquerade_domains = {{ intDomain }}, localdomain"
+              line="masquerade_domains = {{ intDomain }}.cc.tut.fi, {{ intDomain }}, localdomain"
               backup=yes 
               regexp="^masquerade_domains =.*$"
               state=present
@@ -38,15 +38,25 @@
   notify:
     - reload postfix
 
-- name: Create canonical_db for node mails
+- name: Create sender_canonical_db for node mails
   tags: postfix
   copy: src=files/sender_canonical dest=/etc/postfix/sender_canonical
   register: postfix_sender_canonical
   
-- name: Ensure canonical_db is compiled
+- name: Ensure sender_canonical_db is compiled
   tags: postfix
   shell: postmap /etc/postfix/sender_canonical
   when: postfix_sender_canonical | changed
+
+- name: Create receiver_canonical for node mails
+  tags: postfix
+  copy: src=files/receiver_canonical dest=/etc/postfix/receiver_canonical
+  register: postfix_receiver_canonical
+  
+- name: Ensure receiver_canonical_db is compiled
+  tags: postfix
+  shell: postmap /etc/postfix/receiver_canonical
+  when: postfix_receiver_canonical | changed
 
 - name: Add sender_canonical to postfix.conf
   tags: postfix
@@ -54,6 +64,15 @@
               line="sender_canonical_maps = pcre:/etc/postfix/sender_canonical"
               backup=yes
               regexp="^sender_canonical_maps =.*$"
+              state=present
+  notify: reload postfix
+
+- name: Add receiver_canonical to postfix.conf
+  tags: postfix
+  lineinfile: dest=/etc/postfix/main.cf
+              line="recipient_canonical_maps = pcre:/etc/postfix/receiver_canonical"
+              backup=yes
+              regexp="^recipient_canonical_maps =.*$"
               state=present
   notify: reload postfix
 
@@ -69,7 +88,7 @@
 - name: Make sure that remoteheaders are modified
   tags: postfix
   lineinfile: dest=/etc/postfix/main.cf
-              line="remote_header_rewrite_domain = tcsc-local"
+              line="remote_header_rewrite_domain = {{ intDomain }}.cc.tut.fi, {{ intDomain }}"
               backup=yes
               regexp="^remote_header_rewrite_domain =.*$"
               state=present
