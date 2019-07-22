@@ -29,7 +29,7 @@
 - name: Lets masquerade mail from internal hosts
   tags: postfix
   lineinfile: dest=/etc/postfix/main.cf
-              line="masquerade_domains = {{ intDomain }}.cc.tut.fi, {{ intDomain }}, localdomain"
+              line="masquerade_domains = {{ intDomain }}.cc.tut.fi, {{ intDomain }}, localdomain, carina.cc.tut.fi"
               backup=yes 
               regexp="^masquerade_domains =.*$"
               state=present
