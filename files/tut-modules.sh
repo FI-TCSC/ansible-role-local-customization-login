@@ -1,2 +1,2 @@
 # Adding local modulepath
-export MODULEPATH=$MODULEPATH:/home/opt/modules
+export MODULEPATH=$MODULEPATH:{{ local_module_path }}
