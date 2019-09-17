@@ -103,11 +103,6 @@
               state=present
   notify: reload postfix
 
-
-- name: Add local modulepath to /etc/profile.d
-  tags: local
-  copy: src=files/tut-modules.sh dest=/etc/profile.d/tut-modules.sh
-
 - name: Add admin group to sudoers
   tags: sudo
   lineinfile: "dest=/etc/sudoers
