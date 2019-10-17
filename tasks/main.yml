@@ -103,6 +103,20 @@
               state=present
   notify: reload postfix
 
+- name: Lets limit postfix mail-rate 
+  tags: postfix,limit
+  blockinfile: 
+    path: /etc/postfix/main.cf
+    state: present
+    backup: yes
+    marker_begin: "Start of postfix ratelimit"
+    marker_end: "end of postfix ratelimit"
+    block: |
+      smtp_destination_concurrency_limit = 2
+      smtp_destination_rate_delay = 1s
+      smtp_extra_recipient_limit = 10
+  notify: reload postfix
+
 - name: Add admin group to sudoers
   tags: sudo
   lineinfile: "dest=/etc/sudoers
