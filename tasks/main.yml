@@ -46,7 +46,7 @@
 - name: Ensure sender_canonical_db is compiled
   tags: postfix
   shell: postmap /etc/postfix/sender_canonical
-  when: postfix_sender_canonical | changed
+  when: postfix_sender_canonical.changed
 
 - name: Create receiver_canonical for node mails
   tags: postfix
@@ -56,7 +56,7 @@
 - name: Ensure receiver_canonical_db is compiled
   tags: postfix
   shell: postmap /etc/postfix/receiver_canonical
-  when: postfix_receiver_canonical | changed
+  when: postfix_receiver_canonical.changed
 
 - name: Add sender_canonical to postfix.conf
   tags: postfix
