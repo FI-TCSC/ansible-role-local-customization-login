@@ -2,4 +2,4 @@
 /(.*)@(.*)\.tcsc-local.cc.tut.fi/       $1-$2@narvi.cc.tut.fi
 /(.*)@tcsc-local.cc.tut.fi/             $1@narvi.cc.tut.fi
 /(.*)@(.*)\.tcsc-local/             $1-$2@narvi.cc.tut.fi
-/slurm@(.*)/							noreply@tut.fi
+/slurm@(.*)/							tcsc-alerts@tuni.fi
