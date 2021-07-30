@@ -148,11 +148,11 @@
     gpgcheck: no
 
 - name: Copy local krb5.conf to login-nodes
-  tags: intrahome
+  tags: tunihome
   copy: src=files/krb5.conf dest=/etc/krb5.conf
 
 - name: Add --trust-dns flag to request-key.conf
-  tags: intrahome
+  tags: tunihome
   lineinfile: 
       dest=/etc/request-key.d/cifs.spnego.conf
       line="create  cifs.spnego    * * /usr/sbin/cifs.upcall --trust-dns %k"
